@@ -5,13 +5,17 @@ class fileZipper():
     def __init__(self) -> None:
         pass
     def zip_file(self,zip_name:str,zip_loc:str="none") -> None:
-        if zip_loc == "none":
-            dir_list = listdir()
-        else:
-            dir_list = listdir(zip_loc)
-            #add directory name in front of each file in the list
-            dir_list = list(map(lambda file_name: path.join(zip_loc, file_name), dir_list))
-            zip_name = path.join(zip_loc, zip_name)
+        try:
+            if zip_loc == "none":
+                dir_list = listdir()
+            else:
+                dir_list = listdir(zip_loc)
+                #add directory name in front of each file in the list
+                dir_list = list(map(lambda file_name: path.join(zip_loc, file_name), dir_list))
+                zip_name = path.join(zip_loc, zip_name)
+        except Exception as e:
+            print(f"fileZipper |\t ERROR {e} \t| unable to find {zip_loc} directory")
+            return None
 
         if zip_name[-4:-1] != ".zip":
             zip_name += ".zip"
@@ -49,5 +53,5 @@ class fileZipper():
 
 if __name__ == "__main__":
     zip = fileZipper()
-    #zip.zip_file("zipped","src_test")
-    zip.unzip_file("zipped")
+    zip.zip_file("zipped","src_testfj")
+    zip.unzip_file("zippeder")
