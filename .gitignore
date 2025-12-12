@@ -3,3 +3,4 @@
 /src_test
 /dest_test
 *.zip
+test_command.py

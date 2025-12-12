@@ -4,7 +4,7 @@ from os import listdir, path
 class fileZipper():
     def __init__(self) -> None:
         pass
-    def zip_file(self,zip_name:str,zip_loc:str="none") -> None:
+    def zip_file(self,zip_name:str,zip_loc:str="none") -> str:
         try:
             if zip_loc == "none":
                 dir_list = listdir()
@@ -15,9 +15,10 @@ class fileZipper():
                 zip_name = path.join(zip_loc, zip_name)
         except Exception as e:
             print(f"fileZipper |\t ERROR {e} \t| unable to find {zip_loc} directory")
-            return None
-
-        if zip_name[-4:-1] != ".zip":
+            return ""
+        print(zip_name)
+        print(zip_name[-4:])
+        if zip_name[-4:] != ".zip":
             zip_name += ".zip"
         try:
             with ZipFile(zip_name, 'w', ZIP_DEFLATED) as myzip:
@@ -29,11 +30,13 @@ class fileZipper():
                     except Exception as e:
                         print(f"fileZipper | ERROR {e} | unable to zip {file}")
             print(f"fileZipper |\t {zip_name} \t| done")
+            return zip_name
         except Exception as e:
             print(f"fileZipper |\t ERROR {e} \t| unable to zip into {zip_name}")
+            return ""
     
     def unzip_file(self,zip_name:str,compress_loc:str="none") -> None:
-        if zip_name[-4:-1] != ".zip":
+        if zip_name[-4:] != ".zip":
             zip_name += ".zip"
 
         if compress_loc != "none":
@@ -53,5 +56,5 @@ class fileZipper():
 
 if __name__ == "__main__":
     zip = fileZipper()
-    zip.zip_file("zipped","src_testfj")
-    zip.unzip_file("zippeder")
+    zip.zip_file("zipped.zip","src_test")
+    #zip.unzip_file("zippeder")
