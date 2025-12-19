@@ -64,9 +64,6 @@ class fileMover():
                     self.copyFile(discovered_path, destination)
             except Exception as e:
                 print(f"fileMover |\t ERROR {e} \t| file not valid {discovery_name}")
-    
-    def recursiveDirectoryCrawl(self,func:Callable, directory_path:str = "none") -> None:
-        pass
 
 if __name__ == "__main__":
     fileMover().copyAll("dest_test", "src_test")
