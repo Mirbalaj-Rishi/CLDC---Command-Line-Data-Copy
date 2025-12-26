@@ -46,3 +46,7 @@ Below is a list of files and there purpose
 Future Updates
 -----------------
 - add file unzipping to the command
+
+Known Issues
+--------------
+- sometimes file zipping can causethe ERROR ZIP does not support timestamps before 1980 even when none of the documents are older than 1980
