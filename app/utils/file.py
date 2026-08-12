@@ -11,7 +11,6 @@ class fileMover():
         if exists == False:
             try:
                 makedirs(loc)
-                print(f"fileMover |\t created directory {loc}")
                 return True
             except Exception as e:
                 print(f"fileMover |\t ERROR {e} \t| unable to create nonexistent directory {loc}")
@@ -26,7 +25,6 @@ class fileMover():
             return None
         try:
             move(file_name, destination)
-            print(f"fileMover |\t file moved successfully {file_name}")
         except Exception as e:
             print(f"fileMover |\t ERROR {e} \t| unable to move {file_name}")
 
@@ -35,9 +33,8 @@ class fileMover():
         if can_copy == False:
             print(f"fileMover |\t ERROR \t| destination does not exist and cant be created {destination}")
             return None
-        try: 
+        try:
             copy2(file_name,destination)
-            print(f"fileMover |\t file copyied successfully {file_name}")
         except Exception as e:
             print(f"fileMover |\t ERROR {e} \t| unable to copy {file_name}")
     
@@ -56,11 +53,9 @@ class fileMover():
                 discovered_path = path.join(directory_path, discovery_name) # Construct full path
                 
                 if path.isdir(discovered_path) == True: # if its a directory
-                    print(f"fileMover |\t found directory {discovery_name}")
                     recursive_destination = path.join(destination, discovery_name)
                     self.copyAll(recursive_destination, discovered_path) # copy everything there
                 else:
-                    print(f"fileMover |\t found file {discovery_name}")
                     self.copyFile(discovered_path, destination)
             except Exception as e:
                 print(f"fileMover |\t ERROR {e} \t| file not valid {discovery_name}")

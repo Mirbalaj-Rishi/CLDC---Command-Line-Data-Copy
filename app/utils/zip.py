@@ -16,7 +16,6 @@ class fileZipper():
             zip_name = zip_name[:-4]
         try:
             make_archive(zip_name, 'zip', zip_loc)
-            print(f"fileZipper |\t {zip_name + ".zip"} \t| done")
             return zip_name + ".zip"
         except Exception as e:
             print(f"fileZipper |\t ERROR {e} \t| unable to zip into {zip_name}")
@@ -30,14 +29,11 @@ class fileZipper():
             zip_name = path.join(compress_loc, zip_name)
         try:
             with ZipFile(zip_name, 'r') as myzip:
-                print(f"fileZipper |\t {zip_name} \t| unzipping")
-                myzip.printdir()
                 # extracting all the files
                 if compress_loc != "none":
                     myzip.extractall(compress_loc)
                 else:
                     myzip.extractall()
-                print(f"fileZipper |\t {zip_name} \t| done")
         except Exception as e:
             print(f"fileZipper |\t ERROR {e} \t| unable to unzip {zip_name}")
 

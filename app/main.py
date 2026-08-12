@@ -41,8 +41,6 @@ def main():
         zipAndMoveThread(source_path, destination_path, name)
     else:
         fileMover().copyAll(destination_path, source_path)
-    
-    print("\n Process Complete \n")
 
 if __name__ == "__main__":
     main()
