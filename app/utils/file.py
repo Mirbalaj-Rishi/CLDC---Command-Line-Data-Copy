@@ -65,6 +65,11 @@ class fileMover():
             except Exception as e:
                 print(f"fileMover |\t ERROR {e} \t| file not valid {discovery_name}")
 
-if __name__ == "__main__":
-    fileMover().copyAll("dest_test", "src_test")
+    def listFilesAndFoldersInDir(self,directory_path) -> tuple[list[str],list[str]]:
+        full_list = listdir(directory_path)
+        file_list = [f for f in full_list if path.isfile(path.join(directory_path,f))]
+        dir_list = [dir for dir in full_list if dir not in file_list]
+        return file_list, dir_list
 
+if __name__ == "__main__":
+    pass

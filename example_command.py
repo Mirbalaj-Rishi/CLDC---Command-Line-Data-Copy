@@ -2,7 +2,7 @@ import subprocess
 from os import getcwd, path
 # Define the paths as variables for clarity and easier maintenance
 dir = getcwd()
-SCRIPT_PATH = f"{dir}/main.py"
+SCRIPT_PATH = f"{dir}/app/main.py"
 
 #edit these values
 DEST_PATH = ""

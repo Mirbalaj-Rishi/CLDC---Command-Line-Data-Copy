@@ -43,6 +43,18 @@ Below is a list of files and there purpose
 - zip.py - holds the fileZipper class for zipping and unzipping (not supported yet) files
 - example_command.py - has an example command that can be excuted in the file if some constants are changed.
 
+
+# create a virtual enviroment 
+### install uv 
+    `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+### install 3.14t (for no GIL threading)
+    `uv python install 3.14t`
+### set up enviorment 
+    `uv init --python 3.14t`
+    `uv venv --python 3.14t`
+### make sure free threading is enabled (faster preformance)
+    - run freeThreadTest.py
+
 Future Updates
 -----------------
 - add file unzipping to the command

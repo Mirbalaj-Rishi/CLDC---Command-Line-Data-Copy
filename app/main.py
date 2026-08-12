@@ -1,8 +1,9 @@
 import argparse
-from file import fileMover
-from zip import fileZipper
+from utils.file import fileMover
+from utils.zip import fileZipper
 from datetime import datetime
 from os import getcwd
+from utils.moveAndTransfer import zipAndMoveThread
 
 def main(): 
     # Initialize the parser
@@ -37,10 +38,7 @@ def main():
             date = datetime.now()
             date = date.strftime("%d-%m-%y")
             name = str(date) + ".zip"
-
-        name = fileZipper().zip_file(name, source_path)
-        #returns name so that if the zip_file function adds .zip to the end of the file file mover can read it
-        fileMover().moveFile(name, destination_path)
+        zipAndMoveThread(source_path, destination_path, name)
     else:
         fileMover().copyAll(destination_path, source_path)
     
