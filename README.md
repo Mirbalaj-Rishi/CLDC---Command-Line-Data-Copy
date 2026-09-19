@@ -41,6 +41,7 @@ Below is a list of files and there purpose
 - main.py - holds the argument parser for the main command of this program
 - file.py - holds the fileMover class for moveing, copying files
 - zip.py - holds the fileZipper class for zipping and unzipping (not supported yet) files
+- mutithreaded_job_executor.py - holds code that is used to zip files accross mutiple threads and display that progress to the user
 - example_command.py - has an example command that can be excuted in the file if some constants are changed.
 
 
