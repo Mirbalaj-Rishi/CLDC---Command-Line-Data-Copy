@@ -46,7 +46,10 @@ Below is a list of files and there purpose
 
 # create a virtual enviroment 
 ### install uv 
+##### windows 
     `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+##### linux 
+    `curl -LsSf https://astral.sh/uv/install.sh | sh`
 ### install 3.14t (for no GIL threading)
     `uv python install 3.14t`
 ### set up enviorment 
