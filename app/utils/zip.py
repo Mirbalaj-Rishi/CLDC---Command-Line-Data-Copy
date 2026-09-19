@@ -1,5 +1,5 @@
 from zipfile import ZipFile
-from shutil import make_archive
+from shutil import make_archive,unpack_archive
 from os import path, getcwd
 
 class fileZipper():
@@ -21,23 +21,18 @@ class fileZipper():
             print(f"fileZipper |\t ERROR {e} \t| unable to zip into {zip_name}")
             return ""
     
-    def unzip_file(self,zip_name:str,compress_loc:str="none") -> None:
+    def unzip_file(self,zip_name:str,zip_loc:str="none",unzip_to:str="none") -> None:
         if zip_name[-4:] != ".zip":
             zip_name += ".zip"
 
-        if compress_loc != "none":
-            zip_name = path.join(compress_loc, zip_name)
+        if zip_loc != "none":
+            zip_name = path.join(zip_loc, zip_name)
         try:
-            with ZipFile(zip_name, 'r') as myzip:
-                # extracting all the files
-                if compress_loc != "none":
-                    myzip.extractall(compress_loc)
-                else:
-                    myzip.extractall()
+            unpack_archive(zip_name, unzip_to, "zip")
         except Exception as e:
             print(f"fileZipper |\t ERROR {e} \t| unable to unzip {zip_name}")
 
 if __name__ == "__main__":
     zip = fileZipper()
-    zip.zip_file("zipped.zip","src_test")
-    #zip.unzip_file("zippeder")
+    #zip.zip_file("zipped.zip","src_test")
+    zip.unzip_file("zipped.zip","src_test","dest_test")
