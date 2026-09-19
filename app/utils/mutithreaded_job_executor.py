@@ -25,7 +25,8 @@ class progressBar():
             print(f"\r[{bar}] {percent:3d}% ({done}/{total} zipped) {label}" + " " * 20, end=end, flush=True)
 
 
-def zipFolder(source_path: str, folder_name: str, staging_dir: str, progress: progressBar) -> str:
+
+def zipFolderSingleThread(source_path: str, folder_name: str, staging_dir: str, progress: progressBar) -> str:
     folder_path = path.join(source_path, folder_name)
     result = fileZipper().zip_file(path.join(staging_dir, folder_name), folder_path)
     progress.advance(folder_name)
@@ -53,11 +54,11 @@ def zipAndMoveThread(source_path: str, destination_path: str, zip_name: str) -> 
             fileMover().copyFile(path.join(source_path, file), staging_dir)
 
         with ThreadPoolExecutor(max_workers=len(folders)) as executor:
-            futures = [executor.submit(zipFolder, source_path, folder, staging_dir, progress) for folder in folders]
+            futures = [executor.submit(zipFolderSingleThread, source_path, folder, staging_dir, progress) for folder in folders]
             for future in as_completed(futures):
                 future.result()
 
-        # zip everything staged (per-folder zips + loose files) into one combined archive
+        # zip everything staged (per-folder zips + loose files) into one combined archive at the destination
         fileZipper().zip_file(path.join(destination_path, zip_name), staging_dir)
         progress.advance(path.basename(source_path.rstrip("/\\")) or source_path)
     finally:

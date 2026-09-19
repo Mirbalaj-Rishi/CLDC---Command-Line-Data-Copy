@@ -3,7 +3,7 @@ from utils.file import fileMover
 from utils.zip import fileZipper
 from datetime import datetime
 from os import getcwd
-from utils.moveAndTransfer import zipAndMoveThread
+from utils.mutithreaded_job_executor import zipAndMoveThread
 
 def main(): 
     # Initialize the parser
