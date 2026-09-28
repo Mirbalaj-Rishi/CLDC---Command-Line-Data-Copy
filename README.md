@@ -65,4 +65,5 @@ Future Updates
 
 Known Issues
 --------------
-- sometimes file zipping can causethe ERROR ZIP does not support timestamps before 1980 even when none of the documents are older than 1980
+- files labled as being made before 1980 cannot be zipped
+- unzipping files not implimented yet
