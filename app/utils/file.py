@@ -1,5 +1,5 @@
 from shutil import move, copy2
-from os import path, makedirs, listdir, getcwd
+from os import path, makedirs, listdir, getcwd, mkdir
 from typing import Callable
 class fileMover():
     def __init__(self):
@@ -65,6 +65,26 @@ class fileMover():
         file_list = [f for f in full_list if path.isfile(path.join(directory_path,f))]
         dir_list = [dir for dir in full_list if dir not in file_list]
         return file_list, dir_list
+
+    def createFolder(self,directory_path:str,directory_name:str="none") -> bool:
+        #creates a directory at the given path 
+        # you can put the name in the path or have it seperate 
+        # returns true if the directory was returned successfully
+        # note will return false if the directory already exists
+        if directory_name != "none":
+            directory_path = path.join(directory_path,directory_name)
+        try:
+            mkdir(directory_path)
+            return True
+        except FileExistsError:
+            print(f"fileMover |\t directory already exits {directory_path}")
+            return False
+        except PermissionError:
+            print(f"fileMover |\t Permission denied: Unable to create {directory_path}")
+            return False
+        except Exception as e:
+            print(f"fileMover |\t ERROR {e} \t| Unable to create {directory_path}")
+            return False
 
 if __name__ == "__main__":
     pass

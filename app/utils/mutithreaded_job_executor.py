@@ -1,11 +1,11 @@
-from utils.file import fileMover
-from utils.zip import fileZipper
+# from utils.file import fileMover
+# from utils.zip import fileZipper
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from os import path
 from shutil import rmtree
 from tempfile import mkdtemp
 from threading import Lock
-
+from zipfile import is_zipfile
 
 class progressBar():
     def __init__(self, total: int, width: int = 30) -> None:
@@ -22,7 +22,7 @@ class progressBar():
             bar = "#" * filled + "-" * (self.width - filled)
             percent = int(100 * done / total)
             end = "\n" if done == total else ""
-            print(f"\r[{bar}] {percent:3d}% ({done}/{total} zipped) {label}" + " " * 20, end=end, flush=True)
+            print(f"\r[{bar}] {percent:3d}% ({done}/{total} processed) {label}" + " " * 20, end=end, flush=True)
 
 
 
@@ -63,3 +63,30 @@ def zipAndMoveThread(source_path: str, destination_path: str, zip_name: str) -> 
         progress.advance(path.basename(source_path.rstrip("/\\")) or source_path)
     finally:
         rmtree(staging_dir, ignore_errors=True)
+
+def restoreAndMoveSingleThread(zipped_file,directory, progress):
+    #if the file is a zip file, then it unzips it at a directory named after the file
+    #TODO test if checking zipfile in thread is faster than checking outside of thread
+    full_path = path.join(directory, zipped_file)
+    if is_zipfile(full_path):
+        fileZipper().unzip_file(zipped_file,directory,directory, True)
+    progress.advance(zipped_file)
+    
+def restoreAndMoveThread(source_path: str, destination_path: str, file_name: str) -> None:
+    fileMover().verifyDirectory(destination_path)
+    fileZipper().unzip_file(file_name,source_path,destination_path)
+    files, folders = fileMover().listFilesAndFoldersInDir(destination_path)
+
+    #we want to unzip any zip files in the main directory
+    total_files = len(files)
+    progress = progressBar(total_files)
+    
+    with ThreadPoolExecutor(max_workers=len(files)) as executor:
+        #________________________________
+        futures = [executor.submit(restoreAndMoveSingleThread, file, destination_path, progress) for file in files]
+        for future in as_completed(futures):
+            future.result()
+
+
+if __name__ == "__main__":
+    restoreAndMoveThread("src_test","dest_test","11-08-26")

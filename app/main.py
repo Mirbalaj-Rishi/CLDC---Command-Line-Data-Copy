@@ -10,14 +10,15 @@ def main():
     parser = argparse.ArgumentParser(
                     prog='CDLM',
                     description='COMMAND LINE DATA COPY - tool for backups and moveing files',
-                    epilog='')
+                    epilog='Made by Mirbalaj Rishi')
 
     # Add arguments
     
     parser.add_argument("destination_path", help="Where the file will be moved too.")
     parser.add_argument("-s","--source_path", help="File or directory you want to move. Uses current directory if not included")
     parser.add_argument("-z", "--zip", action="store_true", help="If -z is included Zip the files at the path before sending the file to the destination.")
-    parser.add_argument("-r", "--rename", help="Rename the file when szved in destination.")
+    parser.add_argument("-r", "--rename", help="Rename the file when saved in destination.")
+    
     # Parse the arguments
     args = parser.parse_args()
 
