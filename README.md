@@ -62,6 +62,7 @@ Below is a list of files and there purpose
 Future Updates
 -----------------
 - add file unzipping to the command
+- add unit tests
 
 Known Issues
 --------------
