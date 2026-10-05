@@ -71,6 +71,7 @@ class retoreThreaded():
         full_path = path.join(directory, zipped_file)
         if is_zipfile(full_path):
             fileZipper().unzip_file(zipped_file,directory,directory, True)
+            fileMover().removeFile(directory, zipped_file)
         progress.advance(zipped_file)
         
     def restoreAndMoveThread(self,source_path: str, destination_path: str, file_name: str) -> None:
@@ -81,12 +82,15 @@ class retoreThreaded():
         #we want to unzip any zip files in the main directory
         total_files = len(files)
         progress = progressBar(total_files)
-        
-        with ThreadPoolExecutor(max_workers=len(files)) as executor:
-            #________________________________
-            futures = [executor.submit(self.restoreAndMoveSingleThread, file, destination_path, progress) for file in files]
-            for future in as_completed(futures):
-                future.result()
+        try:
+            with ThreadPoolExecutor(max_workers=len(files)) as executor:
+                #________________________________
+                futures = [executor.submit(self.restoreAndMoveSingleThread, file, destination_path, progress) for file in files]
+                for future in as_completed(futures):
+                    future.result()
+            
+        except Exception as e:
+            print(f"restoreAndMoveThread |\t ERROR {e} \t| unable to unzip individual files please check if files where properly restored")  
 
 
 if __name__ == "__main__":

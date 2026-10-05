@@ -1,5 +1,5 @@
 from shutil import move, copy2
-from os import path, makedirs, listdir, getcwd, mkdir
+from os import path, makedirs, listdir, getcwd, mkdir, remove
 from typing import Callable
 class fileMover():
     def __init__(self):
@@ -85,6 +85,17 @@ class fileMover():
         except Exception as e:
             print(f"fileMover |\t ERROR {e} \t| Unable to create {directory_path}")
             return False
-
+    
+    def removeFile(self, file_path:str, file_name:str="none") -> bool:
+        if file_name != "none":
+            full_path = path.join(file_path,file_name)
+        else:
+            full_path = file_path
+        if path.exists(full_path):
+            remove(full_path)
+            return True
+        else:
+            print(f"fileMover |\t ERROR \t| Unable to delete {full_path} it does not exist")
+            return False
 if __name__ == "__main__":
     pass
