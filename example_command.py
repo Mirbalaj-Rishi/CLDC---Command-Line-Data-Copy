@@ -8,7 +8,9 @@ SCRIPT_PATH = f"{dir}/app/main.py"
 DEST_PATH = ""
 SOURCE_PATH = ""
 RENAME = ""
+RESTORE_TO_PATH = ""
 
+# backup data to another directory
 result = subprocess.run([
     "python",
     SCRIPT_PATH,
@@ -22,6 +24,24 @@ result = subprocess.run([
     "-z",
     #rename the files
     "-r",
+    RENAME
+])
+
+print(result)
+
+# --------------------------------------------------------------------
+
+# restore backed up data
+result = subprocess.run([
+    "python",
+    SCRIPT_PATH,
+    # Positional Argument 1: destination_path
+    DEST_PATH, 
+    # with restore -s is used to specifiy the directory that restore restores to 
+    "-s", 
+    RESTORE_TO_PATH,
+
+    "-res",
     RENAME
 ])
 

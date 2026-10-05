@@ -4,3 +4,4 @@ __pycache__
 /dest_test
 *.zip
 test_command.py
+/res_test

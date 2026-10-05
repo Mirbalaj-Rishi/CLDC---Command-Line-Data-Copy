@@ -18,7 +18,7 @@ Where
     - omitting -s means the program will copy the current working directory
 
 
-Here is an example of a command with all the arguments
+Here is an example of a command with all the arguments to back up data
 ------------------------------------------------------ 
 ```console
 path_to_main.py destination_path -s source_path -z -r new_name
@@ -34,6 +34,21 @@ path_to_main.py destination_path -s source_path -z -r new_name
 - -r is the rename flag which renames the zip file
     - -r only works when -z is in the command
     - .zip at the end of the file name is optional 
+
+Here is an example of a command to restore backed up data
+-----------------------------------------------------------
+```console
+path_to_main.py back_up_location -s restore_location -res name_of_zipped_file
+```
+- back_up_location is where the zipped backup is 
+- restore_location is where the backup files will go
+- -s is the source flag and it specifies where the backup will be restored 
+    - omitting -s means the program restore to the current working directory 
+- -res is the restore flag and it specifies the name of the zipped file in the backup and lets the command know that its restoring a files instead of backing up files
+    - .zip at the end of the file name is optional 
+- -z can be included if you want the program to copy the zip file to the restore_location, instead of unzipping the file 
+
+
 
 Design 
 -------------------------------------
@@ -61,10 +76,9 @@ Below is a list of files and there purpose
 
 Future Updates
 -----------------
-- add file unzipping to the command
+- make it so the program can auto detect zipped backups 
 - add unit tests
 
 Known Issues
 --------------
 - files labled as being made before 1980 cannot be zipped
-- unzipping files not implimented yet
