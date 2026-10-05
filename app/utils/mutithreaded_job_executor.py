@@ -1,5 +1,5 @@
-# from utils.file import fileMover
-# from utils.zip import fileZipper
+from utils.file import fileMover
+from utils.zip import fileZipper
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from os import path
 from shutil import rmtree
@@ -25,68 +25,69 @@ class progressBar():
             print(f"\r[{bar}] {percent:3d}% ({done}/{total} processed) {label}" + " " * 20, end=end, flush=True)
 
 
+class zipThreaded():
+    def zipFolderSingleThread(self,source_path: str, folder_name: str, staging_dir: str, progress: progressBar) -> str:
+        folder_path = path.join(source_path, folder_name)
+        result = fileZipper().zip_file(path.join(staging_dir, folder_name), folder_path)
+        progress.advance(folder_name)
+        return result
 
-def zipFolderSingleThread(source_path: str, folder_name: str, staging_dir: str, progress: progressBar) -> str:
-    folder_path = path.join(source_path, folder_name)
-    result = fileZipper().zip_file(path.join(staging_dir, folder_name), folder_path)
-    progress.advance(folder_name)
-    return result
 
+    def zipAndMoveThread(self, source_path: str, destination_path: str, zip_name: str) -> None:
+        fileMover().verifyDirectory(destination_path)
+        files, folders = fileMover().listFilesAndFoldersInDir(source_path)
 
-def zipAndMoveThread(source_path: str, destination_path: str, zip_name: str) -> None:
-    fileMover().verifyDirectory(destination_path)
-    files, folders = fileMover().listFilesAndFoldersInDir(source_path)
+        # total items to zip: one per subfolder, plus one for the final archive
+        # of the source directory itself (loose files + subfolder zips combined)
+        total_to_zip = len(folders) + 1
+        progress = progressBar(total_to_zip)
 
-    # total items to zip: one per subfolder, plus one for the final archive
-    # of the source directory itself (loose files + subfolder zips combined)
-    total_to_zip = len(folders) + 1
-    progress = progressBar(total_to_zip)
+        if not folders:
+            # nothing to thread, just zip the directory directly
+            fileZipper().zip_file(path.join(destination_path, zip_name), source_path)
+            progress.advance(path.basename(source_path.rstrip("/\\")) or source_path)
+            return
 
-    if not folders:
-        # nothing to thread, just zip the directory directly
-        fileZipper().zip_file(path.join(destination_path, zip_name), source_path)
-        progress.advance(path.basename(source_path.rstrip("/\\")) or source_path)
-        return
+        staging_dir = mkdtemp()
+        try:
+            for file in files:
+                fileMover().copyFile(path.join(source_path, file), staging_dir)
 
-    staging_dir = mkdtemp()
-    try:
-        for file in files:
-            fileMover().copyFile(path.join(source_path, file), staging_dir)
+            with ThreadPoolExecutor(max_workers=len(folders)) as executor:
+                futures = [executor.submit(self.zipFolderSingleThread, source_path, folder, staging_dir, progress) for folder in folders]
+                for future in as_completed(futures):
+                    future.result()
 
-        with ThreadPoolExecutor(max_workers=len(folders)) as executor:
-            futures = [executor.submit(zipFolderSingleThread, source_path, folder, staging_dir, progress) for folder in folders]
+            # zip everything staged (per-folder zips + loose files) into one combined archive at the destination
+            fileZipper().zip_file(path.join(destination_path, zip_name), staging_dir)
+            progress.advance(path.basename(source_path.rstrip("/\\")) or source_path)
+        finally:
+            rmtree(staging_dir, ignore_errors=True)
+
+class retoreThreaded():
+    def restoreAndMoveSingleThread(self,zipped_file,directory, progress):
+        #if the file is a zip file, then it unzips it at a directory named after the file
+        #TODO test if checking zipfile in thread is faster than checking outside of thread
+        full_path = path.join(directory, zipped_file)
+        if is_zipfile(full_path):
+            fileZipper().unzip_file(zipped_file,directory,directory, True)
+        progress.advance(zipped_file)
+        
+    def restoreAndMoveThread(self,source_path: str, destination_path: str, file_name: str) -> None:
+        fileMover().verifyDirectory(destination_path)
+        fileZipper().unzip_file(file_name,source_path,destination_path)
+        files, folders = fileMover().listFilesAndFoldersInDir(destination_path)
+
+        #we want to unzip any zip files in the main directory
+        total_files = len(files)
+        progress = progressBar(total_files)
+        
+        with ThreadPoolExecutor(max_workers=len(files)) as executor:
+            #________________________________
+            futures = [executor.submit(self.restoreAndMoveSingleThread, file, destination_path, progress) for file in files]
             for future in as_completed(futures):
                 future.result()
 
-        # zip everything staged (per-folder zips + loose files) into one combined archive at the destination
-        fileZipper().zip_file(path.join(destination_path, zip_name), staging_dir)
-        progress.advance(path.basename(source_path.rstrip("/\\")) or source_path)
-    finally:
-        rmtree(staging_dir, ignore_errors=True)
-
-def restoreAndMoveSingleThread(zipped_file,directory, progress):
-    #if the file is a zip file, then it unzips it at a directory named after the file
-    #TODO test if checking zipfile in thread is faster than checking outside of thread
-    full_path = path.join(directory, zipped_file)
-    if is_zipfile(full_path):
-        fileZipper().unzip_file(zipped_file,directory,directory, True)
-    progress.advance(zipped_file)
-    
-def restoreAndMoveThread(source_path: str, destination_path: str, file_name: str) -> None:
-    fileMover().verifyDirectory(destination_path)
-    fileZipper().unzip_file(file_name,source_path,destination_path)
-    files, folders = fileMover().listFilesAndFoldersInDir(destination_path)
-
-    #we want to unzip any zip files in the main directory
-    total_files = len(files)
-    progress = progressBar(total_files)
-    
-    with ThreadPoolExecutor(max_workers=len(files)) as executor:
-        #________________________________
-        futures = [executor.submit(restoreAndMoveSingleThread, file, destination_path, progress) for file in files]
-        for future in as_completed(futures):
-            future.result()
-
 
 if __name__ == "__main__":
-    restoreAndMoveThread("src_test","dest_test","11-08-26")
+    retoreThreaded().restoreAndMoveThread("src_test","dest_test","11-08-26")

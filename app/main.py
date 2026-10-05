@@ -3,7 +3,7 @@ from utils.file import fileMover
 from utils.zip import fileZipper
 from datetime import datetime
 from os import getcwd
-from utils.mutithreaded_job_executor import zipAndMoveThread
+from utils.mutithreaded_job_executor import zipThreaded, retoreThreaded
 
 def main(): 
     # Initialize the parser
@@ -18,7 +18,7 @@ def main():
     parser.add_argument("-s","--source_path", help="File or directory you want to move. Uses current directory if not included")
     parser.add_argument("-z", "--zip", action="store_true", help="If -z is included Zip the files at the path before sending the file to the destination.")
     parser.add_argument("-r", "--rename", help="Rename the file when saved in destination.")
-    
+    parser.add_argument("-res","--restore", help="restore files zipped by CDLC (or other programs). This argument takes the name of the zipped file inside the given destination_path and restores it back to the current working directory. If -s path is given then it restores it at that path instead. By default, restore unzips files, but if -z is given then it returns the zipped file")
     # Parse the arguments
     args = parser.parse_args()
 
@@ -27,19 +27,20 @@ def main():
     source_path = args.source_path
     zip_bool = args.zip
     rename = args.rename
-
+    restore_name = args.restore
     if not source_path:
         source_path = getcwd()
 
-    
-    if zip_bool == True:
+    if restore_name:
+        retoreThreaded().restoreAndMoveThread(destination_path, source_path, restore_name)    
+    elif zip_bool == True:
         if rename:
             name = rename
         else:
             date = datetime.now()
             date = date.strftime("%d-%m-%y")
             name = str(date) + ".zip"
-        zipAndMoveThread(source_path, destination_path, name)
+        zipThreaded().zipAndMoveThread(source_path, destination_path, name)
     else:
         fileMover().copyAll(destination_path, source_path)
 

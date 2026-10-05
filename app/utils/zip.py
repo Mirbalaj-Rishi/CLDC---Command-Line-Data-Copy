@@ -1,6 +1,6 @@
 from shutil import make_archive,unpack_archive
 from os import path, getcwd
-from file import fileMover
+from utils.file import fileMover #include utils since this file gets imported from other files
 from zipfile import is_zipfile
 class fileZipper():
     def __init__(self) -> None:
@@ -50,7 +50,3 @@ class fileZipper():
             
         
 
-if __name__ == "__main__":
-    zip = fileZipper()
-    #zip.zip_file("zipped.zip","src_test")
-    zip.unzip_file("zipped.zip","src_test","dest_test")
