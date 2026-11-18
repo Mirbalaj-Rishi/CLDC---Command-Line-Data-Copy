@@ -85,3 +85,4 @@ Known Issues
 - the file path on windows cannot have spaces 
     - eg C:\my folder needs to be C:\my_folder 
     - havent tested it for other operating systems
+- the program lets you use / in file names (using -r) which creates unintentional sub folders
