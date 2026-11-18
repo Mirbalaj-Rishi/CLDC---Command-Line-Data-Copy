@@ -10,7 +10,7 @@ This project has a single command desinged to help with backing up files to a di
 For example here is a simple command:
 -------------------------------------
 ```console
-path_to_main.py destination_path
+python path_to_main.py destination_path
 ```
 Where
 - path_to_main.py is the path to the main.py file in this repository 
@@ -21,7 +21,7 @@ Where
 Here is an example of a command with all the arguments to back up data
 ------------------------------------------------------ 
 ```console
-path_to_main.py destination_path -s source_path -z -r new_name
+python path_to_main.py destination_path -s source_path -z -r new_name
 ```
 - path_to_main.py is the path to the main.py file in this repository
 - destination_path is the destination you want to copy files to 
@@ -38,7 +38,7 @@ path_to_main.py destination_path -s source_path -z -r new_name
 Here is an example of a command to restore backed up data
 -----------------------------------------------------------
 ```console
-path_to_main.py back_up_location -s restore_location -res name_of_zipped_file
+python path_to_main.py back_up_location -s restore_location -res name_of_zipped_file
 ```
 - back_up_location is where the zipped backup is 
 - restore_location is where the backup files will go
@@ -82,3 +82,6 @@ Future Updates
 Known Issues
 --------------
 - files labled as being made before 1980 cannot be zipped
+- the file path on windows cannot have spaces 
+    - eg C:\my folder needs to be C:\my_folder 
+    - havent tested it for other operating systems
